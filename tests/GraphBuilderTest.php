@@ -9,14 +9,14 @@ use Drupal\Core\TypedData\MapDataDefinition;
 use Drupal\Core\TypedData\TypedDataManagerInterface;
 
 /**
- * @coversDefaultClass \Drupal\TypeGraph\GraphBuilder
+ * @coversDefaultClass \Drupal\Component\TypeGraph\GraphBuilder
  */
 class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
 
   protected function getGraphBuilder() {
-    $typed_data_manager = $this->prophesize(TypedDataManagerInterface::class);
-    $graph_builder = new GraphBuilder($typed_data_manager->reveal());
-    return $graph_builder;
+    $typedDataManager = $this->prophesize(TypedDataManagerInterface::class);
+    $graphBuilder = new GraphBuilder($typedDataManager->reveal());
+    return $graphBuilder;
   }
 
   public function testString() {
@@ -24,8 +24,8 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
       'type' => 'string',
     ]);
 
-    $graph_builder = $this->getGraphBuilder();
-    $tree = $graph_builder->buildNode($definition);
+    $graphBuilder = $this->getGraphBuilder();
+    $tree = $graphBuilder->buildNode($definition);
 
     /** @var \Drupal\Core\TypedData\DataDefinition $value */
     $value = $tree->getValue();
@@ -37,8 +37,8 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
       'type' => 'float',
     ]);
 
-    $graph_builder = $this->getGraphBuilder();
-    $tree = $graph_builder->buildNode($definition);
+    $graphBuilder = $this->getGraphBuilder();
+    $tree = $graphBuilder->buildNode($definition);
 
     /** @var \Drupal\Core\TypedData\DataDefinition $value */
     $value = $tree->getValue();
@@ -53,8 +53,8 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
       'type' => 'list',
     ], $sub_definition);
 
-    $graph_builder = $this->getGraphBuilder();
-    $tree = $graph_builder->buildNode($definition);
+    $graphBuilder = $this->getGraphBuilder();
+    $tree = $graphBuilder->buildNode($definition);
 
     /** @var \Drupal\Core\TypedData\DataDefinition $value */
     $value = $tree->getValue();
@@ -65,7 +65,7 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testMapFloatAndString() {
-    $string_definition = new DataDefinition([
+    $stringDefinition = new DataDefinition([
       'type' => 'string',
     ]);
     $float_definition = new DataDefinition([
@@ -73,12 +73,12 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
     ]);
     $definition = new MapDataDefinition([
       'type' => 'map',
-    ], $string_definition);
+    ], $stringDefinition);
     $definition->setPropertyDefinition('float_key', $float_definition);
-    $definition->setPropertyDefinition('string_key', $string_definition);
+    $definition->setPropertyDefinition('string_key', $stringDefinition);
 
-    $graph_builder = $this->getGraphBuilder();
-    $tree = $graph_builder->buildNode($definition);
+    $graphBuilder = $this->getGraphBuilder();
+    $tree = $graphBuilder->buildNode($definition);
 
     /** @var \Drupal\Core\TypedData\DataDefinition $value */
     $value = $tree->getValue();
@@ -95,19 +95,19 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testDamnComplexAndNeverRealisticExample() {
-    $entity_definition = MapDataDefinition::createFromDataType('map');
-    $field_list_definition = ListDataDefinition::createFromDataType('list');
-    $string_definition = DataDefinition::createFromDataType('string');
+    $entityDefinition = MapDataDefinition::createFromDataType('map');
+    $fieldListDefinition = ListDataDefinition::createFromDataType('list');
+    $stringDefinition = DataDefinition::createFromDataType('string');
 
-    $field_list_definition->setItemDefinition($string_definition);
-    $entity_definition->setPropertyDefinition('field_name', $field_list_definition);
+    $fieldListDefinition->setItemDefinition($stringDefinition);
+    $entityDefinition->setPropertyDefinition('field_name', $fieldListDefinition);
 
-    $graph_builder = $this->getGraphBuilder();
-    $tree = $graph_builder->buildNode($entity_definition);
+    $graphBuilder = $this->getGraphBuilder();
+    $tree = $graphBuilder->buildNode($entityDefinition);
 
-    $this->assertEquals($entity_definition, $tree->getValue());
-    $this->assertEquals($field_list_definition, $tree->getNode('field_name')->getValue());
-    $this->assertEquals($string_definition, $tree->getNode('field_name')->getItem()->getValue());
+    $this->assertEquals($entityDefinition, $tree->getValue());
+    $this->assertEquals($fieldListDefinition, $tree->getNode('field_name')->getValue());
+    $this->assertEquals($stringDefinition, $tree->getNode('field_name')->getItem()->getValue());
   }
 
 }
