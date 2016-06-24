@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\TypeGraph;
+namespace Drupal\Component\TypeGraph;
 
 use Drupal\Core\TypedData\ComplexDataDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinitionInterface;
@@ -37,7 +37,7 @@ class GraphBuilder {
    */
   public function buildNode(DataDefinitionInterface $definition) {
     if ($definition instanceof ListDataDefinitionInterface) {
-      return new ListNode($definition, $this->buildNode($definition->getItemDefinition());
+      return new ListNode($definition, $this->buildNode($definition->getItemDefinition()));
     }
 
     if ($definition instanceof ComplexDataDefinitionInterface) {
