@@ -2,6 +2,16 @@
 
 namespace Drupal\TypeGraph;
 
-interface NodeInterface extends \Countable, \IteratorAggregate {
+interface NodeInterface {
 
+  /**
+   * @param $value
+   * @return static
+   */
+  public function setValue($value);
+
+  /**
+   * @return mixed
+   */
+  public function getValue();
 }
