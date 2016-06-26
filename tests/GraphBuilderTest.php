@@ -19,6 +19,9 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
     return $graphBuilder;
   }
 
+  /**
+   * @covers ::buildNode
+   */
   public function testString() {
     $definition = new DataDefinition([
       'type' => 'string',
@@ -32,6 +35,9 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals('string', $value->getDataType());
   }
 
+  /**
+   * @covers ::buildNode
+   */
   public function testFloat() {
     $definition = new DataDefinition([
       'type' => 'float',
@@ -45,6 +51,9 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals('float', $value->getDataType());
   }
 
+  /**
+   * @covers ::buildNode
+   */
   public function testListOfFloats() {
     $sub_definition = new DataDefinition([
       'type' => 'string',
@@ -64,8 +73,11 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals('string', $value->getValue()->getDataType());
   }
 
+  /**
+   * @covers ::buildNode
+   */
   public function testMapFloatAndString() {
-    $stringDefinition = new DataDefinition([
+    $string_definition = new DataDefinition([
       'type' => 'string',
     ]);
     $float_definition = new DataDefinition([
@@ -73,9 +85,9 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
     ]);
     $definition = new MapDataDefinition([
       'type' => 'map',
-    ], $stringDefinition);
+    ], $string_definition);
     $definition->setPropertyDefinition('float_key', $float_definition);
-    $definition->setPropertyDefinition('string_key', $stringDefinition);
+    $definition->setPropertyDefinition('string_key', $string_definition);
 
     $graphBuilder = $this->getGraphBuilder();
     $tree = $graphBuilder->buildNode($definition);
@@ -94,20 +106,23 @@ class GraphBuilderTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals('string', $child->getValue()->getDataType());
   }
 
+  /**
+   * @covers ::buildNode
+   */
   public function testDamnComplexAndNeverRealisticExample() {
-    $entityDefinition = MapDataDefinition::createFromDataType('map');
-    $fieldListDefinition = ListDataDefinition::createFromDataType('list');
-    $stringDefinition = DataDefinition::createFromDataType('string');
+    $entity_definition = MapDataDefinition::createFromDataType('map');
+    $field_list_definition = ListDataDefinition::createFromDataType('list');
+    $string_definition = DataDefinition::createFromDataType('string');
 
-    $fieldListDefinition->setItemDefinition($stringDefinition);
-    $entityDefinition->setPropertyDefinition('field_name', $fieldListDefinition);
+    $field_list_definition->setItemDefinition($string_definition);
+    $entity_definition->setPropertyDefinition('field_name', $field_list_definition);
 
     $graphBuilder = $this->getGraphBuilder();
-    $tree = $graphBuilder->buildNode($entityDefinition);
+    $tree = $graphBuilder->buildNode($entity_definition);
 
-    $this->assertEquals($entityDefinition, $tree->getValue());
-    $this->assertEquals($fieldListDefinition, $tree->getNode('field_name')->getValue());
-    $this->assertEquals($stringDefinition, $tree->getNode('field_name')->getItem()->getValue());
+    $this->assertEquals($entity_definition, $tree->getValue());
+    $this->assertEquals($field_list_definition, $tree->getNode('field_name')->getValue());
+    $this->assertEquals($string_definition, $tree->getNode('field_name')->getItem()->getValue());
   }
 
 }
