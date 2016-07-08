@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\TypeGraph;
+namespace Drupal\Component\TypeGraph;
 
 class ComplexNode extends Node {
   protected $nodes;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\TypeGraph;
+namespace Drupal\Component\TypeGraph;
 
 interface NodeVisitorInterface {
   /**
